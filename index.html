@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moonbeam morning pop quiz</title>
+<style>
+  :root { --navy:#3c3158; --gold:#b8956a; --cream:#f7f3f8; --ink:#2c333d; --line:#e4d5c0; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--cream); color:var(--ink); font-family: Georgia, serif; }
+  header { background:var(--navy); color:#fff; padding:16px 18px; }
+  header small { letter-spacing:.16em; color:var(--gold); }
+  main { max-width:680px; margin:0 auto; padding:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px; }
+  h1 { font-size:1.5rem; margin:6px 0 4px; }
+  p.lead { margin:0 0 12px; }
+  button, .choice { font-family: Georgia, serif; font-size:1.05rem; }
+  button { border:0; border-radius:10px; padding:12px 14px; background:var(--navy); color:#fff; width:100%; margin-top:8px; }
+  button.ghost { background:#fff; color:var(--navy); border:1px solid var(--gold); }
+  .choice { display:block; width:100%; text-align:left; background:#fff; color:var(--ink); border:1px solid var(--line); margin:8px 0; }
+  .choice.on { border-color:var(--navy); background:#f3e7f0; }
+  textarea { width:100%; min-height:90px; font-family: Georgia, serif; font-size:1.05rem; padding:10px; border:1px solid var(--line); border-radius:10px; }
+  .bar { height:8px; background:#eee; border-radius:8px; margin:10px 0 14px; }
+  .bar span { display:block; height:8px; background:var(--gold); border-radius:8px; }
+  .ok { color:#2e6b4f; } .no { color:#8a4b4b; }
+  .hide { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <small>MOONBEAM</small>
+  <h1>Morning pop quiz</h1>
+</header>
+<main>
+  <div id="start" class="card">
+    <p class="lead">Hi Angilee. Ten short questions. No timer. One at a time. A cat break is allowed.</p>
+    <button id="go">Start</button>
+  </div>
+  <div id="quiz" class="card hide">
+    <div class="bar"><span id="bar"></span></div>
+    <p id="kicker"></p>
+    <h2 id="q"></h2>
+    <div id="area"></div>
+    <button id="next">Next</button>
+    <button id="break" class="ghost">Cat break</button>
+    <p id="breaknote" class="hide">Look at a cat. Come back when you want. Your place is saved.</p>
+  </div>
+  <div id="done" class="card hide">
+    <h2>Done</h2>
+    <p id="score"></p>
+    <div id="review"></div>
+    <h2>For Selena</h2>
+    <pre id="copybox"></pre>
+    <button id="copy">Copy answers</button>
+  </div>
+</main>
+<script>
+const qs = [
+  {k:"Poe", q:"Who wrote The Tell-Tale Heart?", choices:["Edgar Allan Poe","O. Henry","Kate Chopin"], a:0, why:"Edgar Allan Poe, 1843."},
+  {k:"Poe", q:"In The Cask of Amontillado, what is Fortunato wearing?", choices:["A school uniform","Motley and a cap with bells","A black coat"], a:1, why:"Carnival clothes: motley and bells."},
+  {k:"Quotes", q:"What do quotation marks mean?", choices:["These words are not mine","The sentence is a question","The words are more important"], a:0, why:"The marks show the words are borrowed."},
+  {k:"Quotes", q:"Which citation is complete?", choices:["Poe, a story","Edgar Allan Poe, The Tell-Tale Heart, 1843","1843 only"], a:1, why:"Author, title, year."},
+  {k:"Quotes", q:"Poe wrote nervous. Which copy is right?", choices:["very nervous","nervous","calm"], a:1, why:"Copy the word exactly."},
+  {k:"Math", q:"8 + (\u22123) =", choices:["11","5","\u22125"], a:1, why:"8 minus 3 is 5."},
+  {k:"Math", q:"A $48 bus pass beats $2.50 rides after about how many rides?", choices:["5","20","48"], a:1, why:"2.50 times 20 is 50, so the pass wins from 20 rides."},
+  {k:"Homeschool", q:"How does homeschool feel so far?", choices:["Okay","Too much","I like it","Not sure yet"], feel:true},
+  {k:"Homeschool", q:"What helps you start?", choices:["A cat break","A short first question","Someone reading it with me","I can start on my own"], feel:true},
+  {k:"Homeschool", q:"One thing to keep, or one thing to change.", write:true, feel:true}
+];
+let i = 0, picks = [];
+const start = document.getElementById("start");
+const quiz = document.getElementById("quiz");
+const done = document.getElementById("done");
+document.getElementById("go").onclick = () => { start.classList.add("hide"); quiz.classList.remove("hide"); show(); };
+document.getElementById("break").onclick = () => document.getElementById("breaknote").classList.toggle("hide");
+document.getElementById("next").onclick = () => {
+  const q = qs[i];
+  let val = null;
+  if (q.write) val = document.querySelector("textarea").value.trim();
+  else {
+    const on = document.querySelector(".choice.on");
+    if (!on) return;
+    val = Number(on.dataset.i);
+  }
+  picks[i] = val;
+  i++;
+  if (i >= qs.length) finish();
+  else show();
+};
+document.getElementById("copy").onclick = () => {
+  navigator.clipboard.writeText(document.getElementById("copybox").textContent);
+  document.getElementById("copy").textContent = "Copied";
+};
+function show() {
+  const q = qs[i];
+  document.getElementById("bar").style.width = ((i)/qs.length*100) + "%";
+  document.getElementById("kicker").textContent = q.k + " \u00b7 " + (i+1) + " of " + qs.length;
+  document.getElementById("q").textContent = q.q;
+  const area = document.getElementById("area");
+  area.innerHTML = "";
+  if (q.write) {
+    area.innerHTML = "<textarea placeholder='A sentence is enough.'></textarea>";
+  } else {
+    q.choices.forEach((c, n) => {
+      const b = document.createElement("button");
+      b.className = "choice";
+      b.textContent = c;
+      b.dataset.i = n;
+      b.onclick = () => { document.querySelectorAll(".choice").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
+      area.appendChild(b);
+    });
+  }
+  document.getElementById("next").textContent = i === qs.length-1 ? "Finish" : "Next";
+}
+function finish() {
+  quiz.classList.add("hide");
+  done.classList.remove("hide");
+  let right = 0, graded = 0, lines = ["Angilee \u00b7 Moonbeam morning pop quiz"];
+  const review = document.getElementById("review");
+  qs.forEach((q, n) => {
+    if (q.feel) {
+      const ans = q.write ? (picks[n] || "(blank)") : q.choices[picks[n]];
+      lines.push(q.q + " " + ans);
+      review.innerHTML += "<p><b>" + q.q + "</b><br>" + ans + "</p>";
+    } else {
+      graded++;
+      const ok = picks[n] === q.a;
+      if (ok) right++;
+      lines.push(q.q + " " + q.choices[picks[n]] + (ok ? " right" : " check"));
+      review.innerHTML += "<p class='" + (ok?"ok":"no") + "'><b>" + q.q + "</b><br>" + (ok?"Right. ":"Not this time. ") + q.why + "</p>";
+    }
+  });
+  document.getElementById("score").textContent = "School questions: " + right + " / " + graded + ". The last three are for Selena, not a score.";
+  document.getElementById("copybox").textContent = lines.join("\n");
+}
+</script>
+</body>
+</html>
