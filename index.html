@@ -24,16 +24,16 @@
   .bar span { display:block; height:8px; background:var(--gold); border-radius:8px; }
   .ok { color:#2e6b4f; } .no { color:#8a4b4b; }
   .hide { display:none; }
+  .cats { display:flex; gap:8px; margin:12px 0; }
+  .cats img { width:32%; border-radius:12px; object-fit:cover; height:120px; }
 </style>
 </head>
 <body>
-<header>
-  <small>MOONBEAM</small>
-  <h1>Morning pop quiz</h1>
-</header>
+<header><small>MOONBEAM</small><h1>Morning pop quiz</h1></header>
 <main>
   <div id="start" class="card">
     <p class="lead">Hi Angilee. Eleven short questions. No timer. One at a time. A cat break is allowed.</p>
+    <div class="cats" id="STARTCATS"></div>
     <button id="go">Start</button>
   </div>
   <div id="quiz" class="card hide">
@@ -43,7 +43,7 @@
     <div id="area"></div>
     <button id="next">Next</button>
     <button id="break" class="ghost">Cat break</button>
-    <p id="breaknote" class="hide">Look at a cat. Come back when you want. Your place is saved.</p>
+    <div id="breaknote" class="hide"><p>Look at a cat. Come back when you want. Your place is saved.</p><div class="cats" id="BREAKCATS"></div></div>
   </div>
   <div id="done" class="card hide">
     <h2>Done</h2>
@@ -53,6 +53,21 @@
     <pre id="copybox"></pre>
     <button id="copy">Copy answers</button>
   </div>
+<script src="https://cdn.jsdelivr.net/gh/selena-collab/moonbeam-morning-quiz@main/catphotos.js"></script>
+<script>
+function paintCats(id){
+  const box = document.getElementById(id);
+  if (!box || !window.CATS) return;
+  window.CATS.forEach(function(b){
+    const img = document.createElement("img");
+    img.alt = "cat";
+    img.src = "data:image/jpeg;base64," + b;
+    box.appendChild(img);
+  });
+}
+paintCats("STARTCATS");
+paintCats("BREAKCATS");
+</script>
 </main>
 <script>
 const qs = [
@@ -99,18 +114,15 @@ function show() {
   document.getElementById("q").textContent = q.q;
   const area = document.getElementById("area");
   area.innerHTML = "";
-  if (q.write) {
-    area.innerHTML = "<textarea placeholder='A sentence is enough.'></textarea>";
-  } else {
-    q.choices.forEach((c, n) => {
-      const b = document.createElement("button");
-      b.className = "choice";
-      b.textContent = c;
-      b.dataset.i = n;
-      b.onclick = () => { document.querySelectorAll(".choice").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
-      area.appendChild(b);
-    });
-  }
+  if (q.write) area.innerHTML = "<textarea placeholder='A sentence is enough.'></textarea>";
+  else q.choices.forEach((c, n) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.textContent = c;
+    b.dataset.i = n;
+    b.onclick = () => { document.querySelectorAll(".choice").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
+    area.appendChild(b);
+  });
   document.getElementById("next").textContent = i === qs.length-1 ? "Finish" : "Next";
 }
 function finish() {
