@@ -33,7 +33,7 @@
 </header>
 <main>
   <div id="start" class="card">
-    <p class="lead">Hi Angilee. Ten short questions. No timer. One at a time. A cat break is allowed.</p>
+    <p class="lead">Hi Angilee. Eleven short questions. No timer. One at a time. A cat break is allowed.</p>
     <button id="go">Start</button>
   </div>
   <div id="quiz" class="card hide">
@@ -56,13 +56,14 @@
 </main>
 <script>
 const qs = [
-  {k:"Poe", q:"Who wrote The Tell-Tale Heart?", choices:["Edgar Allan Poe","O. Henry","Kate Chopin"], a:0, why:"Edgar Allan Poe, 1843."},
-  {k:"Poe", q:"In The Cask of Amontillado, what is Fortunato wearing?", choices:["A school uniform","Motley and a cap with bells","A black coat"], a:1, why:"Carnival clothes: motley and bells."},
-  {k:"Quotes", q:"What do quotation marks mean?", choices:["These words are not mine","The sentence is a question","The words are more important"], a:0, why:"The marks show the words are borrowed."},
-  {k:"Quotes", q:"Which citation is complete?", choices:["Poe, a story","Edgar Allan Poe, The Tell-Tale Heart, 1843","1843 only"], a:1, why:"Author, title, year."},
-  {k:"Quotes", q:"Poe wrote nervous. Which copy is right?", choices:["very nervous","nervous","calm"], a:1, why:"Copy the word exactly."},
-  {k:"Math", q:"8 + (\u22123) =", choices:["11","5","\u22125"], a:1, why:"8 minus 3 is 5."},
-  {k:"Math", q:"A $48 bus pass beats $2.50 rides after about how many rides?", choices:["5","20","48"], a:1, why:"2.50 times 20 is 50, so the pass wins from 20 rides."},
+  {k:"Poe", q:"Who wrote The Tell-Tale Heart?", choices:["Edgar Allan Poe","A news reporter","A merchant"], a:0, why:"Edgar Allan Poe."},
+  {k:"Poe", q:"What bothers the narrator about the old man?", choices:["His gold","His eye","His cat"], a:1, why:"He says it was the eye."},
+  {k:"Poe", q:"At the end, what does he say he hears?", choices:["The old man's heart","A wagon","Rain"], a:0, why:"He says it is the beating of the heart."},
+  {k:"Silk Road", q:"The Silk Road was mostly...", choices:["One paved highway","A chain of cities and pauses","A ship only"], a:1, why:"Goods moved in short relays, city to city."},
+  {k:"Silk Road", q:"Which good is the road named for?", choices:["Silk","Tacos","Paper only"], a:0, why:"Silk went west. Paper, horses, and ideas moved too."},
+  {k:"Silk Road", q:"What else could travel on a trade road?", choices:["Only pretty cloth","Disease","Nothing living"], a:1, why:"The same relays moved plague as well as goods."},
+  {k:"Math", q:"8 + (\u22123) =", choices:["11","5","\u22125"], a:1, why:"Start at 8, go back 3. That is 5."},
+  {k:"Math", q:"10% of 40 =", choices:["4","10","40"], a:0, why:"10% of 40 is 4."},
   {k:"Homeschool", q:"How does homeschool feel so far?", choices:["Okay","Too much","I like it","Not sure yet"], feel:true},
   {k:"Homeschool", q:"What helps you start?", choices:["A cat break","A short first question","Someone reading it with me","I can start on my own"], feel:true},
   {k:"Homeschool", q:"One thing to keep, or one thing to change.", write:true, feel:true}
