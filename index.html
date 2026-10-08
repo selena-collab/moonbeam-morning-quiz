@@ -24,7 +24,7 @@
   .ok { color:#2e6b4f; } .no { color:#8a4b4b; }
   .hide { display:none; }
   .cats { display:flex; gap:8px; margin:12px 0; }
-  .cats img { width:32%; height:140px; object-fit:cover; border-radius:12px; }
+  .cats svg { width:32%; height:130px; border-radius:12px; background:#f3e7d6; }
 </style>
 </head>
 <body>
@@ -32,7 +32,7 @@
 <main>
   <div id="start" class="card">
     <p>Hi Angilee. Eleven short questions. No timer. One at a time. A cat break is allowed.</p>
-    <div class="cats" id="STARTCATS"></div>
+    <div class="cats" id="cats"></div>
     <button id="go">Start</button>
   </div>
   <div id="quiz" class="card hide">
@@ -42,32 +42,17 @@
     <div id="area"></div>
     <button id="next">Next</button>
     <button id="break" class="ghost">Cat break</button>
-    <div id="breaknote" class="hide"><p>Look at a cat. Come back when you want. Your place is saved.</p><div class="cats" id="BREAKCATS"></div></div>
+    <div id="breaknote" class="hide"><p>Look at a cat. Come back when you want. Your place is saved.</p><div class="cats" id="breakcats"></div></div>
   </div>
   <div id="done" class="card hide">
-    <h2>Done</h2>
-    <p id="score"></p>
-    <div id="review"></div>
-    <h2>For Selena</h2>
-    <pre id="copybox"></pre>
-    <button id="copy">Copy answers</button>
+    <h2>Done</h2><p id="score"></p><div id="review"></div>
+    <h2>For Selena</h2><pre id="copybox"></pre><button id="copy">Copy answers</button>
   </div>
 </main>
 <script>
-const cats = ["cat1.jpg","cat2.jpg","cat3.jpg"].map(function(name){
-  return "https://raw.githubusercontent.com/selena-collab/moonbeam-morning-quiz/main/" + name;
-});
-function paint(id){
-  const box = document.getElementById(id);
-  cats.forEach(function(src){
-    const img = document.createElement("img");
-    img.alt = "cat";
-    img.src = src;
-    box.appendChild(img);
-  });
-}
-paint("STARTCATS");
-paint("BREAKCATS");
+const cat = '<svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="140" fill="#f6ead8"/><circle cx="100" cy="78" r="34" fill="#f7f1e6" stroke="#c4a574"/><polygon points="70,58 78,28 92,54" fill="#f7f1e6" stroke="#c4a574"/><polygon points="130,58 122,28 108,54" fill="#f7f1e6" stroke="#c4a574"/><circle cx="88" cy="76" r="3" fill="#3c3158"/><circle cx="112" cy="76" r="3" fill="#3c3158"/><path d="M96 84 Q100 90 104 84" fill="none" stroke="#b8956a" stroke-width="2"/><path d="M40 30 Q70 18 90 36" fill="none" stroke="#d4b483"/><circle cx="150" cy="28" r="10" fill="#e6d3a3"/></svg>';
+document.getElementById("cats").innerHTML = cat + cat + cat;
+document.getElementById("breakcats").innerHTML = cat + cat + cat;
 const qs = [
   {k:"Poe", q:"Who wrote The Tell-Tale Heart?", choices:["Edgar Allan Poe","A news reporter","A merchant"], a:0, why:"Edgar Allan Poe."},
   {k:"Poe", q:"What bothers the narrator about the old man?", choices:["His gold","His eye","His cat"], a:1, why:"He says it was the eye."},
@@ -96,10 +81,10 @@ document.getElementById("next").onclick = () => {
   if (i >= qs.length) finish(); else show();
 };
 document.getElementById("copy").onclick = () => { navigator.clipboard.writeText(document.getElementById("copybox").textContent); document.getElementById("copy").textContent = "Copied"; };
-function show(){
+function show() {
   const q = qs[i];
-  document.getElementById("bar").style.width = (i/qs.length*100) + "%";
-  document.getElementById("kicker").textContent = q.k + " \u00b7 " + (i+1) + " of " + qs.length;
+  document.getElementById("bar").style.width = (i / qs.length * 100) + "%";
+  document.getElementById("kicker").textContent = q.k + " \u00b7 " + (i + 1) + " of " + qs.length;
   document.getElementById("q").textContent = q.q;
   const area = document.getElementById("area");
   area.innerHTML = "";
@@ -110,9 +95,9 @@ function show(){
     b.onclick = () => { document.querySelectorAll(".choice").forEach(x => x.classList.remove("on")); b.classList.add("on"); };
     area.appendChild(b);
   });
-  document.getElementById("next").textContent = i === qs.length-1 ? "Finish" : "Next";
+  document.getElementById("next").textContent = i === qs.length - 1 ? "Finish" : "Next";
 }
-function finish(){
+function finish() {
   quiz.classList.add("hide"); done.classList.remove("hide");
   let right = 0, graded = 0, lines = ["Angilee \u00b7 Moonbeam morning pop quiz"];
   const review = document.getElementById("review");
@@ -124,7 +109,7 @@ function finish(){
     } else {
       graded++; const ok = picks[n] === q.a; if (ok) right++;
       lines.push(q.q + " " + q.choices[picks[n]] + (ok ? " right" : " check"));
-      review.innerHTML += "<p class='" + (ok?"ok":"no") + "'><b>" + q.q + "</b><br>" + (ok?"Right. ":"Not this time. ") + q.why + "</p>";
+      review.innerHTML += "<p class='" + (ok ? "ok" : "no") + "'><b>" + q.q + "</b><br>" + (ok ? "Right. " : "Not this time. ") + q.why + "</p>";
     }
   });
   document.getElementById("score").textContent = "School questions: " + right + " / " + graded + ". The last three are for Selena, not a score.";
